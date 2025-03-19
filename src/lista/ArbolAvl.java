@@ -341,14 +341,18 @@ public class ArbolAvl<T extends Comparable <T>>{
         col.add(null); // Agrego a la cola la raiz y un null
 
         NodoAVL<T> aux;
+        int nivel = 0;
 
+        System.out.println("Nivel " + nivel + ":"); // Imprime el nivel inicial
         while (!col.isEmpty()) { // Mientras la cola no esta vacia...
             aux = col.remove(); // Saco al elemento más antiguo de la cola
 
             if (aux == null) { // Si el elemento sacado es null...
-                System.out.println(); 
+                System.out.println("\n-----");; 
                 if (!col.isEmpty()) {
                     col.add(null); 
+                    nivel++;
+                    System.out.println("Nivel " + nivel + ":");
                 }
             } else { // Si el elemento sacado NO es null, lo imprimo junto con su factor de equilibrio
                 System.out.print(aux.elem + "(FE: " + aux.fe + ")  "); 
