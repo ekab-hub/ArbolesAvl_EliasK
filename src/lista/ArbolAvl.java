@@ -19,13 +19,13 @@ public class ArbolAvl<T extends Comparable <T>>{
         this.raiz = raiz;
     }
 
-    public void agregaAVL(T elem) {
+    public void agregaAVL(T elem) { // Agrega un nuevo elemento al arbol
         NodoAVL<T> actual = raiz;
         NodoAVL<T> papa = raiz;
         boolean encontre = false; 
         NodoAVL<T> nuevo = new NodoAVL<T>(elem);
 
-        while (actual != null) {
+        while (actual != null) { // Dado que el AVL es un ABB, buscamos la posicion donde debe de insertarse el nuevo elemento
              papa = actual;
              if (elem.compareTo(actual.elem) < 0) {
                  actual = actual.izq;
@@ -74,11 +74,11 @@ public class ArbolAvl<T extends Comparable <T>>{
     }
 
 
-    private NodoAVL<T> roto(NodoAVL<T> actual) {
+    private NodoAVL<T> roto(NodoAVL<T> actual) { // Método para rotar en caso de encontrar un nodo con FE = {-2, 2}
         NodoAVL<T> papa = actual.papa;
         NodoAVL<T> alfa, beta, gamma, A, B, C, D;
 
-        if (actual.fe == -2 && actual.izq.fe <= 0) { // Caso izquierda-izquierda 
+        if (actual.fe == -2 && actual.izq.fe <= 0) { // Caso izq-izq
             alfa = actual;
             beta = alfa.izq;
             gamma = beta.izq;
@@ -109,7 +109,7 @@ public class ArbolAvl<T extends Comparable <T>>{
             return beta;
          }
 
-         if (actual.fe == 2 && actual.der.fe >= 0) { // Caso derecha-derecha 
+         if (actual.fe == 2 && actual.der.fe >= 0) { // Caso der-der
              alfa = actual;
              beta = alfa.der;
              gamma = beta.der;
@@ -141,7 +141,7 @@ public class ArbolAvl<T extends Comparable <T>>{
              return beta;
          }
 
-         if (actual.fe == 2 && actual.der.fe == -1) { // Caso derecha-izquierda 
+         if (actual.fe == 2 && actual.der.fe == -1) { // Caso der-izq
              alfa = actual;
              beta = alfa.der;
              gamma = beta.izq;
@@ -173,7 +173,7 @@ public class ArbolAvl<T extends Comparable <T>>{
              return gamma;
          }
 
-         if (actual.fe == -2 && actual.izq.fe == 1) { // Caso izquierda-derecha 
+         if (actual.fe == -2 && actual.izq.fe == 1) { // Caso izq-der
              alfa = actual;
              beta = alfa.izq;
              gamma = beta.der;
@@ -209,13 +209,13 @@ public class ArbolAvl<T extends Comparable <T>>{
     }
 
 
-    private void actualizafe() {
+    private void actualizafe() {  // Actualiza el factor de equilibrio de los nodos, se utiliza en el borra y agrega
         actualizarFe(raiz); 
     }
 
     private void actualizarFe(NodoAVL<T> actual) {
         if (actual == null) {
-            return; // Caso base: si el nodo es nulo, terminamos
+            return; 
         }
         actualizarFe(actual.izq);
         actualizarFe(actual.der);
@@ -236,15 +236,17 @@ public class ArbolAvl<T extends Comparable <T>>{
     }
 
 
-    private int altura(NodoAVL<T> nodo) {
+    private int altura(NodoAVL<T> nodo) { // Calcula la altura del arbol
         if (nodo == null) {
             return 0; 
         }
-        return 1 + Math.max(altura(nodo.izq), altura(nodo.der));
+        int a1 = altura(nodo.izq);
+        int a2 = altura(nodo.der);
+        return 1 + Math.max(a1, a2);
     }
 
 
-    public NodoAVL<T> busca(NodoAVL<T> actual, T elem){
+    public NodoAVL<T> busca(NodoAVL<T> actual, T elem){ // Busca un elemento en el arbol
         if(actual == null)
             return null;
         if(actual.elem.equals(elem))
@@ -256,7 +258,7 @@ public class ArbolAvl<T extends Comparable <T>>{
         return temp;
     }
 
-    private NodoAVL<T> borraAVL(T elem) {
+    private NodoAVL<T> borraAVL(T elem) {  // borra un elemento dado en el arbol
          NodoAVL<T> actual = busca(raiz, elem);
          if (actual == null) {
              return null; 
@@ -265,22 +267,22 @@ public class ArbolAvl<T extends Comparable <T>>{
          NodoAVL<T> papa = actual.papa;
          NodoAVL<T> hijo;
 
-         if (actual.izq == null && actual.der == null) { 
-             if (actual == raiz) {
+         if (actual.izq == null && actual.der == null) { // Caso 1) Nodo borrado no tiene hijos
+             if (actual == raiz) { // Caso 1.1) Nodo borrado no tiene hijos y es la raiz
                  raiz = null; 
              } else {
-                 if (papa.izq == actual) {
+                 if (papa.izq == actual) { // Caso 1.1) Nodo borrado no tiene hijos y no es la raiz
                      papa.izq = null;
                  } else {
                      papa.der = null;
                  }
              }
-         } else if (actual.izq == null) { 
+         } else if (actual.izq == null) {  // Caso 2.1) Nodo borrado solo tiene hijo derecho
              hijo = actual.der;
 
-             if (actual == raiz) {
+             if (actual == raiz) { // Caso 2.1.1) Nodo borrado solo tiene hijo derecho y es raiz
                  raiz = hijo; 
-             } else {
+             } else { // Caso 2.1.1) Nodo borrado solo tiene hijo derecho y no es raiz
                  if (papa.izq == actual) {
                      papa.izq = hijo;
                  } else {
@@ -288,12 +290,12 @@ public class ArbolAvl<T extends Comparable <T>>{
                  }
              }
              hijo.papa = papa; 
-         } else if (actual.der == null) { 
+         } else if (actual.der == null) { // Caso 2.2) Nodo borrado solo tiene hijo izquierdo
              hijo = actual.izq;
 
-             if (actual == raiz) {
+             if (actual == raiz) { // Caso 2.2.1) Nodo borrado solo tiene hijo izquierdo y es raiz
                  raiz = hijo;
-             } else {
+             } else { // Caso 2.2.2) Nodo borrado solo tiene hijo izquierdo y no es raiz
                  if (papa.izq == actual) {
                      papa.izq = hijo;
                  } else {
@@ -301,13 +303,13 @@ public class ArbolAvl<T extends Comparable <T>>{
                  }
              }
              hijo.papa = papa;
-         } else { // Caso 3: Tiene dos hijos
+         } else { // Caso 3) Nodo borrado tiene dos hijos
              NodoAVL<T> sucesor = actual.der;
-             while (sucesor.izq != null) {
+             while (sucesor.izq != null) { // Encuentro el sucesor inorden
                  sucesor = sucesor.izq;
              }
 
-             actual.elem = sucesor.elem; 
+             actual.elem = sucesor.elem; // Cambio el elemento del nodo borrado por el del sucesor
 
              if (sucesor.papa != actual) {
                  sucesor.papa.izq = sucesor.der;
@@ -328,27 +330,27 @@ public class ArbolAvl<T extends Comparable <T>>{
     }
 
 
-    public void ImprimePorNivel() {
-        if (raiz == null) {
-         System.out.println("Árbol vacío");
+    public void ImprimePorNivel() { // Método para imprimir el árbol por nivel
+        if (raiz == null) { // Caso arbol vacio
+         System.out.println("No hay elementos");
          return;
         }
 
-        Queue<NodoAVL<T>> col = new LinkedList<>();
-        col.offer(raiz);
-        col.offer(null);
+        Queue<NodoAVL<T>> col = new LinkedList<>(); // Creo una cola para manejar los elementos 
+        col.add(raiz); 
+        col.add(null); // Agrego a la cola la raiz y un null
 
         NodoAVL<T> aux;
 
-        while (!col.isEmpty()) {
-            aux = col.remove();
+        while (!col.isEmpty()) { // Mientras la cola no esta vacia...
+            aux = col.remove(); // Saco al elemento más antiguo de la cola
 
-            if (aux == null) { 
+            if (aux == null) { // Si el elemento sacado es null...
                 System.out.println(); 
                 if (!col.isEmpty()) {
                     col.add(null); 
                 }
-            } else {
+            } else { // Si el elemento sacado NO es null, lo imprimo junto con su factor de equilibrio
                 System.out.print(aux.elem + "(FE: " + aux.fe + ")  "); 
 
                 if (aux.izq != null) {
@@ -356,7 +358,7 @@ public class ArbolAvl<T extends Comparable <T>>{
                 }
                 if (aux.der != null) {
                     col.add(aux.der);
-                }
+                } // En caso de que no sean nulos, agrego los hijos del elemento que acabo de imprimir a la cola
             }
         }  
     }
